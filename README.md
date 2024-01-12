@@ -1,2 +1,3 @@
-# memcached-mini
-A simple implementation of a distributed key-value storage system such guided by the design of memcached
+# memcached-mini (Work in progress)
+
+An implementation of a distributed key-value storage system guided by the design of memcached (https://memcached.org/)

@@ -22,12 +22,14 @@ int main(int argc, char const *argv[])
     int connfd = accept_client(listenfd);
 
     unordered_map<string, string> kvs;
-    msg_t *rcv_msg = make_msg_ref();
+    msg_t *rcv_msg = make_msg_ref(), *ack = create_ack_msg();
 
     read_msg(connfd, rcv_msg);
+    send_msg(connfd, ack);
     kvs[(*rcv_msg).key] = (*rcv_msg).value;
 
     read_msg(connfd, rcv_msg);
+    send_msg(connfd, ack);
     kvs[(*rcv_msg).key] = (*rcv_msg).value;
     free(rcv_msg);
 

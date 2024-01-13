@@ -17,7 +17,6 @@ using namespace std;
  */
 int read_msg(int connfd, msg_t *msg_p)
 {
-    char ack[] = "Msg Rcvd";
     int len = read(connfd, msg_p, sizeof(*msg_p));
 
     if (len < 0)
@@ -25,12 +24,10 @@ int read_msg(int connfd, msg_t *msg_p)
         perror("Error during read");
         return -1;
     }
+    // TODO: Handle case len == 0
 
-    // TODO: Handle len = 0
-
-    printf("Read from Conn | Len = %d | %s: %s\n", len, (*msg_p).key, (*msg_p).value);
-    write(connfd, ack, strlen(ack));
-    printf("Ack message sent\n");
+    printf("Read from Conn | Len = %d | Type = %d | %s: %s\n",
+           len, (*msg_p).type, (*msg_p).key, (*msg_p).value);
     return 0;
 }
 
@@ -44,20 +41,12 @@ int read_msg(int connfd, msg_t *msg_p)
  */
 int send_msg(int connfd, msg_t *msg_p)
 {
-    int len;
-    char buffer[RESPONSE_BUFSIZE + 1];
-
     if (write(connfd, msg_p, sizeof(*msg_p)) < 0)
     {
         perror("Error during writing message to conn");
         return -1;
     }
-
     printf("Msg sent\n");
-
-    // read response in a buffer with bounded size
-    len = read(connfd, buffer, RESPONSE_BUFSIZE);
-    printf("Received | Len = %d | Obj = %s\n", len, buffer);
     return 0;
 }
 

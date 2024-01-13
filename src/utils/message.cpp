@@ -24,7 +24,11 @@ int read_msg(int connfd, msg_t *msg_p)
         perror("Error during read");
         return -1;
     }
-    // TODO: Handle case len == 0
+    if (len == 0)
+    {
+        printf("EOF reached");
+        return -1;
+    }
 
     printf("Read from Conn | Len = %d | Type = %d | %s: %s\n",
            len, (*msg_p).type, (*msg_p).key, (*msg_p).value);

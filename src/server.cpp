@@ -16,27 +16,41 @@ void print_map(unordered_map<string, string> m)
     }
 }
 
+class Server
+{
+public:
+    int listenfd;
+    unordered_map<string, string> kvs;
+
+    Server(int port)
+    {
+        listenfd = start_listener(PORT);
+    }
+
+    void accept_and_serve_forever()
+    {
+        while (true)
+        {
+            int connfd;
+            msg_t *rcv_msg = make_msg_ref(), *ack = create_ack_msg();
+            if ((connfd = accept_client(listenfd)) != -1)
+            {
+                while (read_msg(connfd, rcv_msg) != -1)
+                {
+                    send_msg(connfd, ack);
+                    kvs[(*rcv_msg).key] = (*rcv_msg).value;
+
+                    cout << "Map State so Far: " << endl;
+                    print_map(kvs);
+                }
+            }
+            close(connfd);
+        }
+    }
+};
+
 int main(int argc, char const *argv[])
 {
-    int listenfd = start_listener(PORT);
-    int connfd = accept_client(listenfd);
-
-    unordered_map<string, string> kvs;
-    msg_t *rcv_msg = make_msg_ref(), *ack = create_ack_msg();
-
-    read_msg(connfd, rcv_msg);
-    send_msg(connfd, ack);
-    kvs[(*rcv_msg).key] = (*rcv_msg).value;
-
-    read_msg(connfd, rcv_msg);
-    send_msg(connfd, ack);
-    kvs[(*rcv_msg).key] = (*rcv_msg).value;
-    free(rcv_msg);
-
-    print_map(kvs);
-
-    // close everything
-    close(connfd);
-    close(listenfd);
-    return 0;
+    Server server(PORT);
+    server.accept_and_serve_forever();
 }

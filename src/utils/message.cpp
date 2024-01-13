@@ -4,8 +4,6 @@
 
 #define RESPONSE_BUFSIZE 1000
 
-using namespace std;
-
 /**
  * @brief Wait to read a message from as and when available
  * on connfd, and store in the location passed by reference
@@ -72,12 +70,12 @@ msg_t *make_msg_ref()
  * @param[in] value The value
  * @return Reference to a `msg_t` instance, null in case of error
  */
-msg_t *create_put_msg(const char key[], const char value[])
+msg_t *create_put_msg(string key, string value)
 {
     msg_t *msg = make_msg_ref();
     (*msg).type = req_put_t;
-    strcpy((*msg).key, key);
-    strcpy((*msg).value, value);
+    strcpy((*msg).key, key.c_str());
+    strcpy((*msg).value, value.c_str());
     return msg;
 }
 
@@ -87,11 +85,11 @@ msg_t *create_put_msg(const char key[], const char value[])
  * @param[in] key The key
  * @return Reference to a `msg_t` instance, null in case of error
  */
-msg_t *create_get_msg(char key[])
+msg_t *create_get_msg(string key)
 {
     msg_t *msg = make_msg_ref();
     (*msg).type = req_get_t;
-    strcpy((*msg).key, key);
+    strcpy((*msg).key, key.c_str());
     return msg;
 }
 
@@ -113,11 +111,11 @@ msg_t *create_ack_msg()
  * @param[in] value The value to be responded with
  * @return Reference to a `msg_t` instance, null in case of error
  */
-msg_t *create_hit_msg(char value[])
+msg_t *create_hit_msg(string value)
 {
     msg_t *msg = make_msg_ref();
     (*msg).type = resp_hit_t;
-    strcpy((*msg).value, value);
+    strcpy((*msg).value, value.c_str());
     return msg;
 }
 

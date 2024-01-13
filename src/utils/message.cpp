@@ -75,8 +75,6 @@ msg_t *make_msg_ref()
 /**
  * @brief Create a `put` message with a KV pair. Caller should
  * free the returned reference.
- * @param[in] connfd File descriptor for client/server
- * communication on either side
  * @param[in] key The key
  * @param[in] value The value
  * @return Reference to a `msg_t` instance, null in case of error
@@ -84,7 +82,7 @@ msg_t *make_msg_ref()
 msg_t *create_put_msg(char key[], char value[])
 {
     msg_t *msg = make_msg_ref();
-    (*msg).type = put_t;
+    (*msg).type = req_put_t;
     strcpy((*msg).key, key);
     strcpy((*msg).value, value);
     return msg;
@@ -93,15 +91,13 @@ msg_t *create_put_msg(char key[], char value[])
 /**
  * @brief Create a `get` message with just the key. Caller should
  * free the returned reference.
- * @param[in] connfd File descriptor for client/server
- * communication on either side
  * @param[in] key The key
  * @return Reference to a `msg_t` instance, null in case of error
  */
 msg_t *create_get_msg(char key[])
 {
     msg_t *msg = make_msg_ref();
-    (*msg).type = get_t;
+    (*msg).type = req_get_t;
     strcpy((*msg).key, key);
     return msg;
 }
@@ -109,13 +105,37 @@ msg_t *create_get_msg(char key[])
 /**
  * @brief Create an `ack` message. Caller should
  * free the returned reference.
- * @param[in] connfd File descriptor for client/server
- * communication on either side
  * @return Reference to a `msg_t` instance, null in case of error
  */
 msg_t *create_ack_msg()
 {
     msg_t *msg = make_msg_ref();
-    (*msg).type = ack_t;
+    (*msg).type = resp_ack_t;
+    return msg;
+}
+
+/**
+ * @brief Create a `hit` message with the value.
+ * Caller should free the returned reference.
+ * @param[in] value The value to be responded with
+ * @return Reference to a `msg_t` instance, null in case of error
+ */
+msg_t *create_hit_msg(char value[])
+{
+    msg_t *msg = make_msg_ref();
+    (*msg).type = resp_hit_t;
+    strcpy((*msg).value, value);
+    return msg;
+}
+
+/**
+ * @brief Create a `miss` message
+ * Caller should free the returned reference.
+ * @return Reference to a `msg_t` instance, null in case of error
+ */
+msg_t *create_miss_msg()
+{
+    msg_t *msg = make_msg_ref();
+    (*msg).type = resp_miss_t;
     return msg;
 }

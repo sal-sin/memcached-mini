@@ -1,26 +1,46 @@
 #include <unistd.h>
 #include <iostream>
+#include <vector>
 #include "utils/message.hpp"
 #include "sys/conn.hpp"
 
+using namespace std;
+
 #define PORT 6000
+
+class Client
+{
+public:
+    int clientfd;
+
+    Client(int port)
+    {
+        clientfd = connect_server(PORT);
+    }
+
+    void send_put_req(string key, string value)
+    {
+        if (key.length() > MAX_KSIZE || value.length() > MAX_VSIZE)
+        {
+            printf("Cannot send key size greater than %d bytes \
+                    or value size greater than %d bytes ",
+                   MAX_KSIZE, MAX_VSIZE);
+            return;
+        }
+        msg_t *put_msg, *rcv_msg;
+        rcv_msg = make_msg_ref();
+        put_msg = create_put_msg(key.c_str(), value.c_str());
+
+        send_msg(clientfd, put_msg);
+        read_msg(clientfd, rcv_msg);
+        free(put_msg);
+        free(rcv_msg);
+    }
+};
 
 int main(int argc, char const *argv[])
 {
-    int client_fd = connect_server(PORT);
-    msg_t *put_msg, *put_msg_2, *rcv_msg;
-    rcv_msg = make_msg_ref();
-
-    put_msg = create_put_msg((char *)"Me", (char *)"Hello World");
-    send_msg(client_fd, put_msg);
-    read_msg(client_fd, rcv_msg);
-    free(put_msg);
-
-    put_msg_2 = create_put_msg((char *)"World", (char *)"Hello You");
-    send_msg(client_fd, put_msg_2);
-    read_msg(client_fd, rcv_msg);
-    free(put_msg_2);
-
-    close(client_fd);
-    return 0;
+    Client client(PORT);
+    client.send_put_req("Me", "Hello World");
+    client.send_put_req("World", "Hello You");
 }

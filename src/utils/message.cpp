@@ -72,7 +72,7 @@ msg_t *make_msg_ref()
  * @param[in] value The value
  * @return Reference to a `msg_t` instance, null in case of error
  */
-msg_t *create_put_msg(char key[], char value[])
+msg_t *create_put_msg(const char key[], const char value[])
 {
     msg_t *msg = make_msg_ref();
     (*msg).type = req_put_t;

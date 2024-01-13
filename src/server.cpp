@@ -33,8 +33,10 @@ public:
         {
             int connfd;
             msg_t *rcv_msg = make_msg_ref(), *ack = create_ack_msg();
+            // accept
             if ((connfd = accept_client(listenfd)) != -1)
             {
+                // serve put requests until client closes connection
                 while (read_msg(connfd, rcv_msg) != -1)
                 {
                     send_msg(connfd, ack);

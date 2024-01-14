@@ -1,4 +1,4 @@
-# memcached-mini
+# Memcached-Mini [Work in Progress]
 
 An implementation of a distributed, in-memory key-value storage system inspired by the design of [memcached](https://memcached.org/). This is one of my pet projects to keep my distributed systems skills sharp.
 
@@ -26,9 +26,34 @@ I have used the following implementation approach for my project:
 - Consistency management: All requests are processed in the order they are received by the server
 - Eviction policy when cache gets full: `TBD`
 
-## Tasks
+## Features to implement
 
-- [x] Implement and test a single client-server interaction for get/put requests
-  - [x] A module handling connections
-  - [x] Put requests submitted by client should get reflected on the server's state
-  - [ ] Get requests from client should result in appropriate response from server
+- [x] Utilities to get started
+
+  - [x] Add a module for connection establishment b/w server & client
+  - [x] Add a module defining the types of messages that can be received
+  - [x] Add utilities to create messages
+  - [x] Document the above
+  - [x] `read()` timeout configuration using `poll()`
+
+- [x] Single server KV store interacting with one client
+
+  - [x] Put requests get reflected on the server's state
+  - [x] Get requests from client result in appropriate response from server
+
+- [ ] Distributed KV Store
+
+  - [ ] Configure client with multiple servers
+  - [ ] Hash function
+  - [ ] Key-server mapper
+
+- [ ] Concurrent request processing
+
+  - [ ] Spawn new thread for every client
+  - [ ] Protect kv store state from concurrent access
+
+- [ ] Server failure handling
+  - [ ] Keep track of disconnected servers in a data structure
+  - [ ] Flag server as `inactive` after response `read()` timeout
+  - [ ] Ping dead servers in specified intervals to check if they have come alive
+  - [ ] Add logic to connect with rejoined server and flag as `active`

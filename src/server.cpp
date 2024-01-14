@@ -71,7 +71,6 @@ public:
             }
 
             // respond back to the client
-            sleep(5);
             send_msg(connfd, resp);
             free(resp);
         }

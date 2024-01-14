@@ -73,9 +73,9 @@ msg_t *make_msg_ref()
 msg_t *create_put_msg(string key, string value)
 {
     msg_t *msg = make_msg_ref();
-    (*msg).type = req_put_t;
-    strcpy((*msg).key, key.c_str());
-    strcpy((*msg).value, value.c_str());
+    msg->type = req_put_t;
+    strcpy(msg->key, key.c_str());
+    strcpy(msg->value, value.c_str());
     return msg;
 }
 
@@ -88,8 +88,8 @@ msg_t *create_put_msg(string key, string value)
 msg_t *create_get_msg(string key)
 {
     msg_t *msg = make_msg_ref();
-    (*msg).type = req_get_t;
-    strcpy((*msg).key, key.c_str());
+    msg->type = req_get_t;
+    strcpy(msg->key, key.c_str());
     return msg;
 }
 
@@ -101,7 +101,7 @@ msg_t *create_get_msg(string key)
 msg_t *create_ack_msg()
 {
     msg_t *msg = make_msg_ref();
-    (*msg).type = resp_ack_t;
+    msg->type = resp_ack_t;
     return msg;
 }
 
@@ -114,8 +114,8 @@ msg_t *create_ack_msg()
 msg_t *create_hit_msg(string value)
 {
     msg_t *msg = make_msg_ref();
-    (*msg).type = resp_hit_t;
-    strcpy((*msg).value, value.c_str());
+    msg->type = resp_hit_t;
+    strcpy(msg->value, value.c_str());
     return msg;
 }
 
@@ -127,6 +127,6 @@ msg_t *create_hit_msg(string value)
 msg_t *create_miss_msg()
 {
     msg_t *msg = make_msg_ref();
-    (*msg).type = resp_miss_t;
+    msg->type = resp_miss_t;
     return msg;
 }

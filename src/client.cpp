@@ -8,6 +8,10 @@ using namespace std;
 
 #define PORT 6000
 
+/**
+ * @brief represents a single client. This class contains
+ * public functions that can be interacted with by the application.
+ */
 class Client
 {
 public:
@@ -32,7 +36,7 @@ public:
         put_msg = create_put_msg(key, value);
 
         send_msg(clientfd, put_msg);
-        read_msg(clientfd, rcv_msg);
+        read_msg(clientfd, rcv_msg); // wait for acknowledgement
         free(put_msg);
         free(rcv_msg);
     }
@@ -50,7 +54,7 @@ public:
         get_msg = create_get_msg(key);
 
         send_msg(clientfd, get_msg);
-        read_msg(clientfd, rcv_msg);
+        read_msg(clientfd, rcv_msg); // wait for get value
         free(get_msg);
         free(rcv_msg);
     }
@@ -61,4 +65,5 @@ int main(int argc, char const *argv[])
     Client client(PORT);
     client.send_put_req("Me", "Hello World");
     client.send_put_req("World", "Hello You");
+    client.send_get_req("Me");
 }

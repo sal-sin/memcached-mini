@@ -85,7 +85,7 @@ msg_t *create_hit_msg(string value);
  * Caller should free the returned reference.
  * @return Reference to a `msg_t` instance, null in case of error
  */
-msg_t *create_miss_msg(string value);
+msg_t *create_miss_msg();
 
 /**
  * @brief Create reference for a `msg_t` type struct.

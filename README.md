@@ -8,7 +8,7 @@ High-level design decisions made by developers of memcached can be found [here](
 
 I have used the following implementation approach for my project:
 
-### Memcached Client
+#### Memcached Client
 
 - Clients are initialized with the server endpoints available to them and are aware of these servers at all times.
 - A client can send the following requests to any server belonging to the server pool it was initialized with:
@@ -17,7 +17,7 @@ I have used the following implementation approach for my project:
 - For a given key, the client issues Get/Put requests to a single server. The client picks the server to contact using chord protocol that uses consistent hashing. The main idea is that a key will be stored on a server that has the smallest hash value greater than or equal to that of the key. More details can be found in [this paper describing the chord protocol](https://pdos.csail.mit.edu/papers/ton:chord/paper-ton.pdf). This offers the advantage of even load balancing under normal operation and in the event of server failure/rejoin. This also ensures fault tolerance and availability since one server failure doesn't impact all the keys stored in the system.
 - The client should be able to detect server failures and rejoins. To keep this simple, the client will declare a server dead when no response is received from the server by a pre-defined timeout. Thenafter, the client will keep pinging the dead servers at certain time intervals to detect the server rejoins.
 
-### Memcached Server
+#### Memcached Server
 
 - The server responds to Get and Put requests issued by clients as described in the previous section.
   - The server must respond with an acknowledgement upon receiving a Put request.

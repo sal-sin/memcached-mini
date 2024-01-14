@@ -30,44 +30,65 @@ struct msg_t
 /**
  * @brief Wait to read a message from as and when available
  * on connfd, and store in the location passed by reference
+ *
  * @param[in] connfd File descriptor for client/server
  * communication on either side
  * @param[in] msg_p Pointer to the location where the packet
  * contents need to be stored
+ * @param[in] timeout_ms -1 if waiting forever is desired,
+ * else pass timeout value in milliseconds.
+ *
  * @return 1 if successful, else -1
  */
-int read_msg(int connfd, msg_t *msg_p);
+int read_msg(int connfd, msg_t *msg_p, int timeout_ms);
 
 /**
  * @brief Send a message to client/server
+ *
  * @param[in] connfd File descriptor for client/server
  * communication on either side
  * @param[in] msg_p Pointer to the location where the message
  * contents are stored
+ *
  * @return 1 if successful, else -1
  */
 int send_msg(int connfd, msg_t *msg_p);
 
 /**
+ * @brief Create reference for a `msg_t` type struct.
+ * Caller should free the returned reference.
+ *
+ * @return Reference to a `msg_t` instance, null in case of error
+ */
+msg_t *make_msg_ref();
+
+/**
  * @brief Create a `put` message with a KV pair. Caller should
  * free the returned reference.
+ *
  * @param[in] key The key
  * @param[in] value The value
- * @return Reference to a `msg_t` instance, null in case of error
+ *
+ * @return Reference to a `msg_t` instance, NULL in case of
+ * greater than specified size
  */
 msg_t *create_put_msg(string key, string value);
 
 /**
  * @brief Create a `get` message with just the key. Caller should
  * free the returned reference.
+ *
  * @param[in] key The key
- * @return Reference to a `msg_t` instance, null in case of error
+ *
+ * @return Reference to a `msg_t` instance, NULL in case of
+ * greater than specified size
  */
 msg_t *create_get_msg(string key);
 
 /**
  * @brief Create an `ack` message. Caller should
  * free the returned reference.
+ *
  * @return Reference to a `msg_t` instance, null in case of error
  */
 msg_t *create_ack_msg();
@@ -75,7 +96,9 @@ msg_t *create_ack_msg();
 /**
  * @brief Create a `hit` message with the value.
  * Caller should free the returned reference.
+ *
  * @param[in] value The value to be responded with
+ *
  * @return Reference to a `msg_t` instance, null in case of error
  */
 msg_t *create_hit_msg(string value);
@@ -83,13 +106,7 @@ msg_t *create_hit_msg(string value);
 /**
  * @brief Create a `miss` message
  * Caller should free the returned reference.
+ *
  * @return Reference to a `msg_t` instance, null in case of error
  */
 msg_t *create_miss_msg();
-
-/**
- * @brief Create reference for a `msg_t` type struct.
- * Caller should free the returned reference.
- * @return Reference to a `msg_t` instance, null in case of error
- */
-msg_t *make_msg_ref();

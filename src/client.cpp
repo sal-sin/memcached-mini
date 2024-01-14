@@ -22,48 +22,42 @@ public:
         clientfd = connect_server(PORT);
     }
 
-    void send_put_req(string key, string value)
+    void send_put_req(string key, string value, msg_t *response)
     {
-        if (key.length() > MAX_KSIZE || value.length() > MAX_VSIZE)
-        {
-            printf("Cannot send key size greater than %d bytes \
-                    or value size greater than %d bytes ",
-                   MAX_KSIZE, MAX_VSIZE);
-            return;
-        }
-        msg_t *put_msg, *rcv_msg;
-        rcv_msg = make_msg_ref();
+        msg_t *put_msg;
         put_msg = create_put_msg(key, value);
 
-        send_msg(clientfd, put_msg);
-        read_msg(clientfd, rcv_msg); // wait for acknowledgement
-        free(put_msg);
-        free(rcv_msg);
-    }
-
-    void send_get_req(string key)
-    {
-        if (key.length() > MAX_KSIZE)
+        if (!put_msg)
         {
-            printf("Key size cannot be greater than %d bytes", MAX_KSIZE);
             return;
         }
 
-        msg_t *get_msg, *rcv_msg;
-        rcv_msg = make_msg_ref();
+        send_msg(clientfd, put_msg);
+        read_msg(clientfd, response, -1); // wait for acknowledgement
+        free(put_msg);
+    }
+
+    void send_get_req(string key, msg_t *response)
+    {
+        msg_t *get_msg;
         get_msg = create_get_msg(key);
 
+        if (!get_msg)
+        {
+            return;
+        }
+
         send_msg(clientfd, get_msg);
-        read_msg(clientfd, rcv_msg); // wait for get value
+        read_msg(clientfd, response, -1); // wait for value
         free(get_msg);
-        free(rcv_msg);
     }
 };
 
 int main(int argc, char const *argv[])
 {
     Client client(PORT);
-    client.send_put_req("Me", "Hello World");
-    client.send_put_req("World", "Hello You");
-    client.send_get_req("Me");
+    msg_t *resp = make_msg_ref();
+    client.send_put_req("Me", "Hello World", resp);
+    client.send_put_req("World", "Hello You", resp);
+    client.send_get_req("Me", resp);
 }

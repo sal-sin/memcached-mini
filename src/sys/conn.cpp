@@ -24,11 +24,12 @@
  */
 int start_listener(int port)
 {
-    int listenfd, opt = 1;                       // server listener descriptor, option for setsockopt
-    struct sockaddr_in addr;                     // address to bind to
-    addr.sin_family = AF_INET;                   // IP v4 address family (32 bit)
-    addr.sin_addr.s_addr = inet_addr(LOCALHOST); // localhost address only
-    addr.sin_port = htons(port);
+    int listenfd, opt = 1; // server listener descriptor, option for setsockopt
+
+    // address to bind to, AF_INET for IPv4
+    struct sockaddr_in addr = {.sin_family = AF_INET,
+                               .sin_addr.s_addr = inet_addr(LOCALHOST),
+                               .sin_port = htons(port)};
 
     // The socket where server should listen for new connection requests
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -87,10 +88,10 @@ int accept_client(int listenfd)
 int connect_server(int port)
 {
     int clientfd;
-    struct sockaddr_in addr;
-    addr.sin_family = AF_INET;                   // IPv4
-    addr.sin_addr.s_addr = inet_addr(LOCALHOST); // localhost address only
-    addr.sin_port = htons(port);
+    // AF_INET for IPv4
+    struct sockaddr_in addr = {.sin_family = AF_INET,
+                               .sin_addr.s_addr = inet_addr(LOCALHOST),
+                               .sin_port = htons(port)};
 
     // Open a socket to communicate with server
     if ((clientfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)

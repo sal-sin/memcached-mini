@@ -10,14 +10,14 @@ using namespace std;
 
 /**
  * @brief an instance of this class represents a single
- * server. This class contains all the functions that a
- * server should do
+ * server. Instantiating a `Server` object will start
+ * a localhost server that listens on the port passed
  */
 class Server
 {
 public:
     int listenfd;
-    unordered_map<string, string> kvs;
+    unordered_map<string, string> kv_store;
 
     Server(int port)
     {
@@ -31,50 +31,50 @@ public:
      */
     void accept_and_serve_forever()
     {
+        int connfd;
         while (true)
         {
-            int connfd;
-            msg_t *req_msg = make_msg_ref();
-
             // accept
             if ((connfd = accept_client(listenfd)) != -1)
             {
-                // keep reading until EOF
-                while (read_msg(connfd, req_msg) != -1)
-                {
-                    process_req(connfd, req_msg);
-
-                    cout << "KV store state so far: " << endl;
-                    print_map();
-                }
+                process_requests(connfd);
             }
             close(connfd);
         }
     }
 
     /**
-     * @brief process a request received from the client
-     * and respond back
+     * @brief process requests received from the client
+     * and respond back until EOF is reached
      * @param[in] connfd the fd to communicate with client
-     * @param[in] req_msg the request received from the client
      */
-    void process_req(int connfd, msg_t *req_msg)
+    void process_requests(int connfd)
     {
-        msg_t *resp;
-        switch (req_msg->type)
+        msg_t *resp, *req_msg = make_msg_ref();
+        // keep reading until EOF
+        while (read_msg(connfd, req_msg, -1) != -1)
         {
-        case req_put_t:
-            kvs[req_msg->key] = req_msg->value;
-            resp = create_ack_msg();
-            break;
-        case req_get_t:
-            resp = kvs.count(req_msg->key) > 0 ? create_hit_msg(kvs[req_msg->key]) : create_miss_msg();
-            break;
-        default:
-            printf("[Server] Invalid message type received, type = %d", req_msg->type);
+            switch (req_msg->type)
+            {
+            case req_put_t:
+                kv_store[req_msg->key] = req_msg->value;
+                resp = create_ack_msg();
+                print_map();
+                break;
+            case req_get_t:
+                resp = kv_store.count(req_msg->key) > 0
+                           ? create_hit_msg(kv_store[req_msg->key])
+                           : create_miss_msg();
+                break;
+            default:
+                printf("[Server] Invalid message type received, type = %d", req_msg->type);
+            }
+
+            // respond back to the client
+            sleep(5);
+            send_msg(connfd, resp);
+            free(resp);
         }
-        send_msg(connfd, resp);
-        free(resp);
     }
 
     /**
@@ -82,10 +82,14 @@ public:
      */
     void print_map()
     {
-        for (pair<string, string> p : kvs)
+        cout << "===================" << endl;
+        cout << "KV Store state" << endl;
+        cout << "===================" << endl;
+        for (pair<string, string> p : kv_store)
         {
             cout << p.first << " -> " << p.second << endl;
         }
+        cout << "===================" << endl;
     }
 };
 

@@ -20,7 +20,7 @@
  */
 Server::Server(int port)
 {
-    listenfd = start_listener(PORT);
+    listenfd = start_listener(port);
 }
 
 /**

@@ -41,11 +41,11 @@ I have used the following implementation approach for my project:
   - [x] Put requests get reflected on the server's state
   - [x] Get requests from client result in appropriate response from server
 
-- [ ] Distributed KV Store
+- [x] Distributed KV Store
 
-  - [ ] Configure client with multiple servers
-  - [ ] Hash function
-  - [ ] Key-server mapper
+  - [x] Configure client with multiple servers
+  - [x] Hash function
+  - [x] Key-server mapper
 
 - [ ] Concurrent request processing
 

@@ -11,14 +11,99 @@
 #include "../sys/conn.hpp"
 
 /**
- * @brief Client starts by connecting to a localhost server listening
- * at the port passed
+ * @brief Placeholder for a hash function until
+ * openssl setup works
  *
- * @param[in] port The port of the server
+ * @param[in] num An integer to get the hash of
+ *
+ * @return The computer hash value
  */
-Client::Client(int port)
+int hash_value(int num)
 {
-    clientfd = connect_server(PORT);
+    srand(num);
+    return rand() % INT_MAX;
+}
+
+/**
+ * @brief Implementation of Server constructor
+ * @param[in] h The hash value
+ * @param[in] p The port
+ * @param[in] c The clientfd\
+ */
+Server::Server(int h, int p, int c)
+{
+    hash = h;
+    port = p;
+    clientfd = c;
+}
+
+/**
+ * @brief Client starts by connecting to a localhost server listening
+ * at the ports passed
+ *
+ * @param[in] ports ports of the servers in the server pool
+ */
+Client::Client(std::vector<int> ports)
+{
+    int hash, clientfd;
+    for (int port : ports)
+    {
+        hash = hash_value(port);
+        clientfd = connect_server(port);
+        Server *s = new Server(hash, port, clientfd);
+        add_server_to_pool(s);
+    }
+}
+
+/**
+ * @brief Store a server instance to the state
+ * of the client
+ * @param[in] server_p pointer to a `Server` instance
+ */
+void Client::add_server_to_pool(Server *server_p)
+{
+    int n = server_pool.size(), i;
+    Server *s;
+
+    if (n == 0 || server_pool[n - 1]->hash < server_p->hash)
+    {
+        server_pool.push_back(server_p);
+        return;
+    }
+
+    for (i = 0; i < n; i++)
+    {
+        s = server_pool[i];
+        if (s->hash > server_p->hash)
+        {
+            server_pool.insert(server_pool.begin() + i, server_p);
+            return;
+        }
+    }
+}
+
+/**
+ * @brief Selects a server for a given key
+ *
+ * @param[in] key The key to store/fetch
+ *
+ * @return The server instance
+ */
+Server *Client::select_successor_server(std::string key)
+{
+    std::hash<std::string> str_hash_func;
+    int key_hash = str_hash_func(key);
+
+    for (Server *s : server_pool)
+    {
+        // The first alive server that has >= hash value
+        if (s->clientfd >= 0 && s->hash >= key_hash)
+        {
+            return s;
+        }
+    }
+
+    return server_pool[0];
 }
 
 /**
@@ -38,8 +123,9 @@ void Client::send_put_req(std::string key, std::string value, msg_t *response)
         return;
     }
 
-    send_msg(clientfd, put_msg);
-    read_msg(clientfd, response, -1); // wait for acknowledgement
+    Server *server_p = select_successor_server(key);
+    send_msg(server_p->clientfd, put_msg);
+    read_msg(server_p->clientfd, response, -1); // wait for acknowledgement
     free(put_msg);
 }
 
@@ -59,7 +145,8 @@ void Client::send_get_req(std::string key, msg_t *response)
         return;
     }
 
-    send_msg(clientfd, get_msg);
-    read_msg(clientfd, response, -1); // wait for value
+    Server *server_p = select_successor_server(key);
+    send_msg(server_p->clientfd, get_msg);
+    read_msg(server_p->clientfd, response, -1); // wait for value
     free(get_msg);
 }

@@ -9,8 +9,6 @@
  * variable of this class.
  */
 
-#define PORT 6000
-
 /**
  * @brief
  */

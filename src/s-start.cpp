@@ -5,6 +5,15 @@
 
 int main(int argc, char const *argv[])
 {
-    Server server(PORT);
+    int port;
+    if (argc < 2)
+    {
+        printf("You must enter `port` as an argument\n");
+        exit(1);
+    }
+
+    port = std::stoi(argv[1]);
+
+    Server server(port);
     server.accept_and_serve_forever();
 }

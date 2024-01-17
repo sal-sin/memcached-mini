@@ -10,7 +10,16 @@
 #include <iostream>
 #include "../utils/message.hpp"
 
-#define PORT 6000
+/* Represents a server that the client is
+ * connected to */
+class Server
+{
+public:
+    int hash;
+    int port;
+    int clientfd;
+    Server(int hash, int port, int clientfd);
+};
 
 /**
  * @brief represents a single client. This class contains
@@ -19,16 +28,30 @@
 class Client
 {
 private:
-    int clientfd;
+    std::vector<Server *> server_pool;
+
+    /**
+     * @brief Store a server instance to the state
+     * of the client
+     * @param[in] server_p pointer to a `Server` instance
+     */
+    void add_server_to_pool(Server *server_p);
+
+    /**
+     * @brief Selects a server for a given key
+     * @param[in] key The key to store
+     * @return The server instance
+     */
+    Server *select_successor_server(std::string key);
 
 public:
     /**
-     * @brief Client starts by connecting to a localhost server listening
-     * at the port passed
+     * @brief Client starts by connecting to a localhost servers listening
+     * at the ports passed
      *
-     * @param[in] port The port of the server
+     * @param[in] ports Ports of all servers in the server pool
      */
-    Client(int port);
+    Client(std::vector<int> ports);
 
     /**
      * @brief sends a `put` request to the server it is connected to

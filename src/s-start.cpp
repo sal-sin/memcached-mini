@@ -3,9 +3,8 @@
 #include <unordered_map>
 #include "server/server.hpp"
 
-using namespace std;
-
 int main(int argc, char const *argv[])
 {
     Server server(PORT);
+    server.accept_and_serve_forever();
 }

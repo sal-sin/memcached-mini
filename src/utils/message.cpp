@@ -12,7 +12,7 @@
  *
  * @return true if valid, else false
  */
-static bool validate_kv_size(string key, string value)
+static bool validate_kv_size(std::string key, std::string value)
 {
     if (key.length() > MAX_KSIZE)
     {
@@ -113,7 +113,7 @@ msg_t *make_msg_ref()
  * @return Reference to a `msg_t` instance, NULL in case of
  * greater than specified size strings passed
  */
-msg_t *create_put_msg(string key, string value)
+msg_t *create_put_msg(std::string key, std::string value)
 {
     if (!validate_kv_size(key, value))
     {
@@ -136,7 +136,7 @@ msg_t *create_put_msg(string key, string value)
  * @return Reference to a `msg_t` instance, NULL in case of
  * greater than specified size strings passed
  */
-msg_t *create_get_msg(string key)
+msg_t *create_get_msg(std::string key)
 {
     if (!validate_kv_size(key, ""))
     {
@@ -169,7 +169,7 @@ msg_t *create_ack_msg()
  *
  * @return Reference to a `msg_t` instance, null in case of error
  */
-msg_t *create_hit_msg(string value)
+msg_t *create_hit_msg(std::string value)
 {
     msg_t *msg = make_msg_ref();
     msg->type = resp_hit_t;

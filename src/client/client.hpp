@@ -8,10 +8,7 @@
 
 #include <unistd.h>
 #include <iostream>
-#include <vector>
 #include "../utils/message.hpp"
-
-using namespace std;
 
 #define PORT 6000
 
@@ -41,7 +38,7 @@ public:
      * @param[in] response `msg_t` location where the server's
      * reply can be saved
      */
-    void send_put_req(string key, string value, msg_t *response);
+    void send_put_req(std::string key, std::string value, msg_t *response);
 
     /**
      * @brief sends a `get` request to the server it is connected to
@@ -50,5 +47,5 @@ public:
      * @param[in] response `msg_t` location where the server's
      * reply can be saved
      */
-    void send_get_req(string key, msg_t *response);
+    void send_get_req(std::string key, msg_t *response);
 };

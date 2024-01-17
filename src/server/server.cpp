@@ -11,8 +11,6 @@
 #include "../utils/message.hpp"
 #include "../sys/conn.hpp"
 
-using namespace std;
-
 /**
  * @brief an instance of this class represents a single
  * server. Instantiating a `Server` object will start
@@ -23,7 +21,6 @@ using namespace std;
 Server::Server(int port)
 {
     listenfd = start_listener(PORT);
-    Server::accept_and_serve_forever();
 }
 
 /**
@@ -83,12 +80,12 @@ void Server::process_requests(int connfd)
  */
 void Server::print_kv_state()
 {
-    cout << "===================" << endl;
-    cout << "KV Store state" << endl;
-    cout << "===================" << endl;
-    for (pair<string, string> p : kv_store)
+    std::cout << "===================" << std::endl;
+    std::cout << "KV Store state" << std::endl;
+    std::cout << "===================" << std::endl;
+    for (std::pair<std::string, std::string> p : kv_store)
     {
-        cout << p.first << " -> " << p.second << endl;
+        std::cout << p.first << " -> " << p.second << std::endl;
     }
-    cout << "===================" << endl;
+    std::cout << "===================" << std::endl;
 }

@@ -11,8 +11,6 @@
 
 #define PORT 6000
 
-using namespace std;
-
 /**
  * @brief
  */
@@ -24,15 +22,15 @@ public:
      */
     Server(int port);
 
-private:
-    int listenfd;
-    unordered_map<string, string> kv_store;
-
     /**
      * @brief continuously and sequentially keep accepting connections
      * serving requests
      */
     void accept_and_serve_forever();
+
+private:
+    int listenfd;
+    std::unordered_map<std::string, std::string> kv_store;
 
     /**
      * @brief process requests received from the client

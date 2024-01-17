@@ -7,11 +7,8 @@
 
 #include <unistd.h>
 #include <iostream>
-#include <vector>
 #include "client.hpp"
 #include "../sys/conn.hpp"
-
-using namespace std;
 
 /**
  * @brief Client starts by connecting to a localhost server listening
@@ -32,7 +29,7 @@ Client::Client(int port)
  * @param[in] response `msg_t` location where the server's
  * reply can be saved
  */
-void Client::send_put_req(string key, string value, msg_t *response)
+void Client::send_put_req(std::string key, std::string value, msg_t *response)
 {
     msg_t *put_msg = create_put_msg(key, value);
 
@@ -53,7 +50,7 @@ void Client::send_put_req(string key, string value, msg_t *response)
  * @param[in] response `msg_t` location where the server's
  * reply can be saved
  */
-void Client::send_get_req(string key, msg_t *response)
+void Client::send_get_req(std::string key, msg_t *response)
 {
     msg_t *get_msg = create_get_msg(key);
 

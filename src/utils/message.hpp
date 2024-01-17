@@ -1,8 +1,6 @@
 #define MAX_KSIZE 100
 #define MAX_VSIZE 1000
 
-using namespace std;
-
 /**
  * @brief Message types that can be sent to/from the
  * memcache server/client
@@ -72,7 +70,7 @@ msg_t *make_msg_ref();
  * @return Reference to a `msg_t` instance, NULL in case of
  * greater than specified size
  */
-msg_t *create_put_msg(string key, string value);
+msg_t *create_put_msg(std::string key, std::string value);
 
 /**
  * @brief Create a `get` message with just the key. Caller should
@@ -83,7 +81,7 @@ msg_t *create_put_msg(string key, string value);
  * @return Reference to a `msg_t` instance, NULL in case of
  * greater than specified size
  */
-msg_t *create_get_msg(string key);
+msg_t *create_get_msg(std::string key);
 
 /**
  * @brief Create an `ack` message. Caller should
@@ -101,7 +99,7 @@ msg_t *create_ack_msg();
  *
  * @return Reference to a `msg_t` instance, null in case of error
  */
-msg_t *create_hit_msg(string value);
+msg_t *create_hit_msg(std::string value);
 
 /**
  * @brief Create a `miss` message

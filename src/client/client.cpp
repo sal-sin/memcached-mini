@@ -125,7 +125,8 @@ void Client::send_put_req(std::string key, std::string value, msg_t *response)
 
     Server *server_p = select_successor_server(key);
     send_msg(server_p->clientfd, put_msg);
-    display_msg("[Client] Sending Request", put_msg);
+    display_msg("[Client] Sent Request to server at port " + std::to_string(server_p->port),
+                put_msg);
 
     read_msg(server_p->clientfd, response, -1); // wait for acknowledgement
     display_msg("[Client] Received Response", response);
@@ -150,9 +151,24 @@ void Client::send_get_req(std::string key, msg_t *response)
 
     Server *server_p = select_successor_server(key);
     send_msg(server_p->clientfd, get_msg);
-    display_msg("[Client] Sent Request", get_msg);
+    display_msg("[Client] Sent Request to server at port " + std::to_string(server_p->port),
+                get_msg);
 
     read_msg(server_p->clientfd, response, -1); // wait for value
     display_msg("[Client] Received Response", response);
     free(get_msg);
+}
+
+/**
+ * @brief terminates connection with all servers
+ */
+void Client::close_client()
+{
+    for (Server *s : server_pool)
+    {
+        if (s->clientfd >= 0)
+        {
+            close(s->clientfd);
+        }
+    }
 }

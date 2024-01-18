@@ -71,4 +71,9 @@ public:
      * reply can be saved
      */
     void send_get_req(std::string key, msg_t *response);
+
+    /**
+     * @brief terminates connection with all servers
+     */
+    void close_client();
 };

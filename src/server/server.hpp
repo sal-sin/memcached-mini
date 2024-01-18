@@ -26,6 +26,12 @@ public:
      */
     void accept_and_serve_forever();
 
+    /**
+     * @brief Server cannot accept new clients after this call
+     * Connected clients will be served until they disconnect.
+     */
+    void close_server();
+
 private:
     int listenfd;
     std::unordered_map<std::string, std::string> kv_store;

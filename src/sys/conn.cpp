@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <errno.h>
 #include "conn.hpp"
 
 #define LOCALHOST "127.0.0.1"
@@ -20,6 +21,9 @@
 
 /**
  * Open a socket where the server can listen for connections
+ *
+ * @param[in] port The port to start server on
+ *
  * @return listener descriptor if no error was encountered, else, -1
  */
 int start_listener(int port)
@@ -62,19 +66,30 @@ int start_listener(int port)
 /**
  * @brief Listens for connection requests, and accepts
  * client requests to establish a connection with the client
+ *
  * @param listenfd The server listener file descriptor
- * @return The fd where server can read client requests
- * and respond to the client
+ *
+ * @return If successful, the fd where server can read client requests
+ * and respond to the client. On closed FD error, return -1. On any other
+ * error return -2.
  */
 int accept_client(int listenfd)
 {
-    // server and client connection descriptors
-    int connfd;
     // not interested in connected peer info as of now
-    if ((connfd = accept(listenfd, NULL, NULL)) < 0)
+    int connfd = accept(listenfd, NULL, NULL);
+
+    if (connfd < 0)
     {
-        perror("[server] couldn't accept client");
-        return -1;
+        if (errno == EBADF)
+        {
+            perror("socket is not open to accept clients");
+            return -1;
+        }
+        else
+        {
+            perror("error while attempting accept client");
+            return -2;
+        }
     }
     return connfd;
 }

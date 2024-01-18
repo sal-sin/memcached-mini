@@ -33,11 +33,16 @@ void Server::accept_and_serve_forever()
     while (true)
     {
         // accept
-        if ((connfd = accept_client(listenfd)) != -1)
+        std::cout << "\n[Server] Waiting for clients" << std::endl;
+        connfd = accept_client(listenfd);
+        if (connfd >= 0) // valid connection
         {
             process_requests(connfd);
         }
-        close(connfd);
+        else if (connfd == -1) // listenfd closed
+        {
+            break;
+        }
     }
 }
 
@@ -50,7 +55,8 @@ void Server::accept_and_serve_forever()
 void Server::process_requests(int connfd)
 {
     msg_t *resp, *req_msg = make_msg_ref();
-    // keep reading until EOF
+
+    // keep reading until EOF/error
     while (read_msg(connfd, req_msg, -1) != -1)
     {
         display_msg("[Server] Received Request", req_msg);
@@ -75,6 +81,8 @@ void Server::process_requests(int connfd)
         display_msg("[Server] Sending Response", resp);
         free(resp);
     }
+    printf("\n[Server] EOF recieved from connfd\n");
+    close(connfd);
 }
 
 /**
@@ -87,4 +95,13 @@ void Server::print_kv_state()
     {
         std::cout << "\t" << p.first << " -> " << p.second << std::endl;
     }
+}
+
+/**
+ * @brief Server cannot accept new clients after this call
+ * Connected clients will be served until they disconnect.
+ */
+void Server::close_server()
+{
+    close(listenfd);
 }

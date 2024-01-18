@@ -61,7 +61,6 @@ int read_msg(int connfd, msg_t *msg_p, int timeout_ms)
     }
     if (len == 0)
     {
-        printf("EOF reached\n");
         return -1;
     }
 

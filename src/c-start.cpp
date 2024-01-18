@@ -18,7 +18,6 @@ int main(int argc, char const *argv[])
     for (int port_idx = 1; port_idx < argc; port_idx++)
     {
         port = std::stoi(argv[port_idx]);
-        // std::cout << port << std::endl;
         ports.push_back(port);
     }
 
@@ -28,5 +27,6 @@ int main(int argc, char const *argv[])
     client.send_put_req("Me", "Hello World", resp);
     client.send_put_req("World", "Hello You", resp);
     client.send_get_req("Me", resp);
+
     return 0;
 }

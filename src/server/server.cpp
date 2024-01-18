@@ -53,6 +53,7 @@ void Server::process_requests(int connfd)
     // keep reading until EOF
     while (read_msg(connfd, req_msg, -1) != -1)
     {
+        display_msg("[Server] Received Request", req_msg);
         switch (req_msg->type)
         {
         case req_put_t:
@@ -71,6 +72,7 @@ void Server::process_requests(int connfd)
 
         // respond back to the client
         send_msg(connfd, resp);
+        display_msg("[Server] Sending Response", resp);
         free(resp);
     }
 }
@@ -80,12 +82,9 @@ void Server::process_requests(int connfd)
  */
 void Server::print_kv_state()
 {
-    std::cout << "===================" << std::endl;
-    std::cout << "KV Store state" << std::endl;
-    std::cout << "===================" << std::endl;
+    std::cout << "\n[Server] KV Store state so far:" << std::endl;
     for (std::pair<std::string, std::string> p : kv_store)
     {
-        std::cout << p.first << " -> " << p.second << std::endl;
+        std::cout << "\t" << p.first << " -> " << p.second << std::endl;
     }
-    std::cout << "===================" << std::endl;
 }

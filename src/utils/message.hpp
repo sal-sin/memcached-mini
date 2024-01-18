@@ -53,6 +53,14 @@ int read_msg(int connfd, msg_t *msg_p, int timeout_ms);
 int send_msg(int connfd, msg_t *msg_p);
 
 /**
+ * @brief print out a message
+ *
+ * @param[in] prompt A prompt to include with the message
+ * @param[in] msg_p pointer to the message to display
+ */
+void display_msg(std::string prompt, msg_t *msg_p);
+
+/**
  * @brief Create reference for a `msg_t` type struct.
  * Caller should free the returned reference.
  *

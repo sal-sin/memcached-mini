@@ -65,8 +65,6 @@ int read_msg(int connfd, msg_t *msg_p, int timeout_ms)
         return -1;
     }
 
-    printf("Read from Conn | Len = %d | Type = %d | %s: %s\n",
-           len, (*msg_p).type, (*msg_p).key, (*msg_p).value);
     return 0;
 }
 
@@ -87,8 +85,46 @@ int send_msg(int connfd, msg_t *msg_p)
         perror("Error during writing message to conn");
         return -1;
     }
-    printf("Msg sent\n");
     return 0;
+}
+
+/**
+ * @brief return a string describing a message type
+ *
+ * @param type `msg_type_t` type of the message
+ *
+ * @return a string describing the type
+ */
+std::string mtype_to_str(msg_type_t type)
+{
+    switch (type)
+    {
+    case req_get_t:
+        return "Get Request";
+    case req_put_t:
+        return "Put Request";
+    case resp_ack_t:
+        return "Ack Response";
+    case resp_hit_t:
+        return "Hit Response";
+    case resp_miss_t:
+        return "Miss Response";
+    default:
+        return "Invalid Type";
+    }
+}
+
+/**
+ * @brief print out a message
+ *
+ * @param[in] prompt A prompt to include with the message
+ * @param[in] msg_p pointer to the message to display
+ */
+void display_msg(std::string prompt, msg_t *msg_p)
+{
+    printf("\n%s:\n", prompt.c_str());
+    printf("\tType: %s | Key: \"%s\" | Value: \"%s\"\n",
+           mtype_to_str(msg_p->type).c_str(), msg_p->key, msg_p->value);
 }
 
 /**
@@ -100,6 +136,8 @@ int send_msg(int connfd, msg_t *msg_p)
 msg_t *make_msg_ref()
 {
     msg_t *msg = (msg_t *)malloc(sizeof(msg_t));
+    strcpy(msg->key, "");
+    strcpy(msg->value, "");
     return msg;
 }
 
@@ -145,6 +183,7 @@ msg_t *create_get_msg(std::string key)
     msg_t *msg = make_msg_ref();
     msg->type = req_get_t;
     strcpy(msg->key, key.c_str());
+    strcpy(msg->value, "");
     return msg;
 }
 
@@ -158,6 +197,8 @@ msg_t *create_ack_msg()
 {
     msg_t *msg = make_msg_ref();
     msg->type = resp_ack_t;
+    strcpy(msg->key, "");
+    strcpy(msg->value, "");
     return msg;
 }
 
@@ -173,6 +214,7 @@ msg_t *create_hit_msg(std::string value)
 {
     msg_t *msg = make_msg_ref();
     msg->type = resp_hit_t;
+    strcpy(msg->key, "");
     strcpy(msg->value, value.c_str());
     return msg;
 }
@@ -187,5 +229,7 @@ msg_t *create_miss_msg()
 {
     msg_t *msg = make_msg_ref();
     msg->type = resp_miss_t;
+    strcpy(msg->key, "");
+    strcpy(msg->value, "");
     return msg;
 }

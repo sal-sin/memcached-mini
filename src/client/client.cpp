@@ -125,7 +125,10 @@ void Client::send_put_req(std::string key, std::string value, msg_t *response)
 
     Server *server_p = select_successor_server(key);
     send_msg(server_p->clientfd, put_msg);
+    display_msg("[Client] Sending Request", put_msg);
+
     read_msg(server_p->clientfd, response, -1); // wait for acknowledgement
+    display_msg("[Client] Received Response", response);
     free(put_msg);
 }
 
@@ -147,6 +150,9 @@ void Client::send_get_req(std::string key, msg_t *response)
 
     Server *server_p = select_successor_server(key);
     send_msg(server_p->clientfd, get_msg);
+    display_msg("[Client] Sent Request", get_msg);
+
     read_msg(server_p->clientfd, response, -1); // wait for value
+    display_msg("[Client] Received Response", response);
     free(get_msg);
 }

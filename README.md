@@ -1,4 +1,4 @@
-# Memcached-Mini [Work in Progress]
+# Memcached-Mini
 
 An implementation of a distributed, in-memory key-value storage system inspired by the design of [memcached](https://memcached.org/). This is one of my pet projects to keep my distributed systems skills sharp.
 

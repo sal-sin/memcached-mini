@@ -1,3 +1,14 @@
+/**
+ * @file src/runclient.cpp
+ *
+ * @brief This program instantiates a `Client` instance as declared
+ * in ./client/client.hpp. The client must be initialized with a pool
+ * of localhost servers. Ports of servers in the pool are passed through
+ * command line arguments to this programme. Once a `Client` is
+ * initialized, this program offers an command line interface to interact
+ * with memcached servers via Get and Put requests.
+ */
+
 #include <unistd.h>
 #include <iostream>
 #include <vector>
@@ -34,6 +45,12 @@ int main(int argc, char const *argv[])
     return 0;
 }
 
+/**
+ * @brief provides a command line interface for a
+ * user to issue requests to the pool of memcached
+ * servers
+ * @param[in] cl a `Client` instance
+ */
 void start_client_interface(Client cl)
 {
     int op;
@@ -62,7 +79,8 @@ void start_client_interface(Client cl)
             response_val = cl.send_get_req(key, resp);
             if (response_val.length() > 0)
             {
-                cout << "\tReceived value: " << GREEN << response_val << RESET << endl;
+                cout << "\tReceived value: "
+                     << GREEN << response_val << RESET << endl;
             }
             else
             {
@@ -75,10 +93,12 @@ void start_client_interface(Client cl)
             cin >> key;
             cout << "Enter the value to associate with key: ";
             cin >> value;
+
             success = cl.send_put_req(key, value, resp);
             if (success)
             {
-                cout << "\tPut Successful for key: " << GREEN << key << RESET << endl;
+                cout << "\tPut Successful for key: "
+                     << GREEN << key << RESET << endl;
             }
             else
             {

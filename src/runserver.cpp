@@ -1,3 +1,12 @@
+/**
+ * @file src/runserver.cpp
+ *
+ * @brief This program instantiates a `Server` instance as declared
+ * in ./server/server.hpp, and starts it. The server will always run
+ * on localhost and on the port passed as a command line argument to
+ * this program.
+ */
+
 #include <unistd.h>
 #include <iostream>
 #include <unordered_map>

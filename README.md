@@ -47,6 +47,16 @@ I have used the following implementation approach for my project:
   - [x] Hash function
   - [x] Key-server mapper
 
+- [x] User Interaction
+
+  - [x] Create command line interface
+  - [x] Test it manually
+
+- [ ] Logging
+
+  - [ ] Server log files
+  - [ ] Client log files
+
 - [ ] Concurrent request processing
 
   - [ ] Spawn new thread for every client

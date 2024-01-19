@@ -10,6 +10,7 @@
 #include "server.hpp"
 #include "../utils/message.hpp"
 #include "../sys/conn.hpp"
+#include "../utils/colors.hpp"
 
 /**
  * @brief an instance of this class represents a single
@@ -90,10 +91,11 @@ void Server::process_requests(int connfd)
  */
 void Server::print_kv_state()
 {
-    std::cout << "\n[Server] KV Store state so far:" << std::endl;
+    std::cout << GREEN << "\n[Server] KV Store state so far:" << RESET << std::endl;
     for (std::pair<std::string, std::string> p : kv_store)
     {
-        std::cout << "\t" << p.first << " -> " << p.second << std::endl;
+        std::cout << "\t" << YELLOW << p.first << RESET
+                  << " -> " << YELLOW << p.second << RESET << std::endl;
     }
 }
 

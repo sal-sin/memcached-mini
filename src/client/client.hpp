@@ -60,8 +60,10 @@ public:
      * @param[in] value the value (max length = 1000 bytes)
      * @param[in] response `msg_t` location where the server's
      * reply can be saved
+     *
+     * @return true if request was successful, else false
      */
-    void send_put_req(std::string key, std::string value, msg_t *response);
+    bool send_put_req(std::string key, std::string value, msg_t *response);
 
     /**
      * @brief sends a `get` request to the server it is connected to
@@ -69,8 +71,11 @@ public:
      * @param[in] key the key (max length = 100 bytes)
      * @param[in] response `msg_t` location where the server's
      * reply can be saved
+     *
+     * @return The value as a non-empty string, return "" if no
+     * value was received
      */
-    void send_get_req(std::string key, msg_t *response);
+    std::string send_get_req(std::string key, msg_t *response);
 
     /**
      * @brief terminates connection with all servers

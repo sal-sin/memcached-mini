@@ -41,7 +41,7 @@ static bool validate_kv_size(std::string key, std::string value)
  * @param[in] timeout_ms -1 if waiting forever is desired,
  * else pass timeout value in milliseconds.
  *
- * @return 1 if successful, else -1
+ * @return 1 if successful, -1 in case of error/EOF
  */
 int read_msg(int connfd, msg_t *msg_p, int timeout_ms)
 {
@@ -59,12 +59,12 @@ int read_msg(int connfd, msg_t *msg_p, int timeout_ms)
         perror("Error during read\n");
         return -1;
     }
-    if (len == 0)
+    if (len == 0) // EOF Reached
     {
         return -1;
     }
 
-    return 0;
+    return 1;
 }
 
 /**
@@ -152,6 +152,7 @@ msg_t *make_msg_ref()
  */
 msg_t *create_put_msg(std::string key, std::string value)
 {
+    // TODO: Validate value is non-empty
     if (!validate_kv_size(key, value))
     {
         return NULL;

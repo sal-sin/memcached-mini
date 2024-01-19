@@ -113,24 +113,36 @@ Server *Client::select_successor_server(std::string key)
  * @param[in] value the value (max length = 1000 bytes)
  * @param[in] response `msg_t` location where the server's
  * reply can be saved
+ *
+ * @return true if request was successful, else false
  */
-void Client::send_put_req(std::string key, std::string value, msg_t *response)
+bool Client::send_put_req(std::string key, std::string value, msg_t *response)
 {
     msg_t *put_msg = create_put_msg(key, value);
-
     if (!put_msg)
     {
-        return;
+        return false;
     }
 
     Server *server_p = select_successor_server(key);
+    bool success = false;
+
     send_msg(server_p->clientfd, put_msg);
     display_msg("[Client] Sent Request to server at port " + std::to_string(server_p->port),
                 put_msg);
 
-    read_msg(server_p->clientfd, response, -1); // wait for acknowledgement
-    display_msg("[Client] Received Response", response);
+    // wait for acknowledgement
+    if (read_msg(server_p->clientfd, response, -1) >= 0)
+    {
+        display_msg("[Client] Received Response", response);
+        success = true;
+    }
+    else
+    {
+        success = false;
+    }
     free(put_msg);
+    return success;
 }
 
 /**
@@ -139,24 +151,37 @@ void Client::send_put_req(std::string key, std::string value, msg_t *response)
  * @param[in] key the key (max length = 100 bytes)
  * @param[in] response `msg_t` location where the server's
  * reply can be saved
+ *
+ * @return The value as a non-empty string, return "" if no
+ * value was received
  */
-void Client::send_get_req(std::string key, msg_t *response)
+std::string Client::send_get_req(std::string key, msg_t *response)
 {
     msg_t *get_msg = create_get_msg(key);
 
     if (!get_msg)
     {
-        return;
+        return "";
     }
 
     Server *server_p = select_successor_server(key);
+    std::string value = "";
+
     send_msg(server_p->clientfd, get_msg);
     display_msg("[Client] Sent Request to server at port " + std::to_string(server_p->port),
                 get_msg);
 
-    read_msg(server_p->clientfd, response, -1); // wait for value
-    display_msg("[Client] Received Response", response);
+    // wait for value
+    if (read_msg(server_p->clientfd, response, -1) >= 0)
+    {
+        display_msg("[Client] Received Response", response);
+
+        if (response->type == resp_hit_t)
+            value = response->value;
+    }
+
     free(get_msg);
+    return value;
 }
 
 /**

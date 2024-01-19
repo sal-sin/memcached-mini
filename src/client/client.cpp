@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <iostream>
 #include "client.hpp"
-#include "../sys/conn.hpp"
+#include "../utils/conn.hpp"
 
 /**
  * @brief Placeholder for a hash function until

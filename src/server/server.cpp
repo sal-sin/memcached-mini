@@ -9,7 +9,7 @@
 #include <iostream>
 #include "server.hpp"
 #include "../utils/message.hpp"
-#include "../sys/conn.hpp"
+#include "../utils/conn.hpp"
 #include "../utils/colors.hpp"
 
 /**

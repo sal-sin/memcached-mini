@@ -26,6 +26,17 @@ I have used the following implementation approach for my project:
 - Consistency management: All requests are processed in the order they are received by the server
 - Eviction policy when cache gets full: `TBD`
 
+## Usage
+Go inside the repository and follow the steps below:
+
+- Run a localhost memcached server.
+
+      sh server.sh <port>
+
+- Run a memcached client configured with the ports of localhost servers present in the server pool available:
+
+      sh client.sh <server1_port> <server2_port> ...
+
 ## Features to implement
 
 - [x] Utilities to get started

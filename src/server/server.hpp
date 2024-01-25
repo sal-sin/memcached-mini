@@ -10,13 +10,14 @@
  */
 
 /**
- * @brief
+ * @brief Represents a single server
  */
 class Server
 {
 public:
     /**
      * The constructor should start a new server
+     * @param[in] port the localhost port where server should be started
      */
     Server(int port);
 

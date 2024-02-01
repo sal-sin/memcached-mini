@@ -35,6 +35,7 @@ public:
 
 private:
     int listenfd;
+    std::mutex kv_store_mutex;
     std::unordered_map<std::string, std::string> kv_store;
 
     /**

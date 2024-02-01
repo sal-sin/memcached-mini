@@ -7,6 +7,7 @@
 
 #include <unistd.h>
 #include <iostream>
+#include <thread>
 #include "server.hpp"
 #include "../utils/message.hpp"
 #include "../utils/conn.hpp"
@@ -38,7 +39,9 @@ void Server::accept_and_serve_forever()
         connfd = accept_client(listenfd);
         if (connfd >= 0) // valid connection
         {
-            process_requests(connfd);
+            std::cout << GREEN << "\n[Server] Client connected" << RESET << std::endl;
+            std::thread cl_thread(&Server::process_requests, this, connfd);
+            cl_thread.detach();
         }
         else if (connfd == -1) // listenfd closed
         {
@@ -64,14 +67,18 @@ void Server::process_requests(int connfd)
         switch (req_msg->type)
         {
         case req_put_t:
+            kv_store_mutex.lock();
             kv_store[req_msg->key] = req_msg->value;
             resp = create_ack_msg();
             print_kv_state();
+            kv_store_mutex.unlock();
             break;
         case req_get_t:
+            kv_store_mutex.lock();
             resp = kv_store.count(req_msg->key) > 0
                        ? create_hit_msg(kv_store[req_msg->key])
                        : create_miss_msg();
+            kv_store_mutex.unlock();
             break;
         default:
             printf("[Server] Invalid message type received, type = %d", req_msg->type);

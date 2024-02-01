@@ -40,7 +40,6 @@ Go inside the repository and follow the steps below:
 ## Features to implement
 
 - [x] Utilities to get started
-
   - [x] Add a module for connection establishment b/w server & client
   - [x] Add a module defining the types of messages that can be received
   - [x] Add utilities to create messages
@@ -48,12 +47,10 @@ Go inside the repository and follow the steps below:
   - [x] `read()` timeout configuration using `poll()`
 
 - [x] Single server KV store interacting with one client
-
   - [x] Put requests get reflected on the server's state
   - [x] Get requests from client result in appropriate response from server
 
 - [x] Distributed KV Store
-
   - [x] Configure client with multiple servers
   - [x] Hash function
   - [x] Key-server mapper
@@ -63,18 +60,17 @@ Go inside the repository and follow the steps below:
   - [x] Create command line interface
   - [x] Test it manually
 
-- [ ] Logging
+- [x] Concurrent request processing
 
-  - [ ] Server log files
-  - [ ] Client log files
-
-- [ ] Concurrent request processing
-
-  - [ ] Spawn new thread for every client
-  - [ ] Protect kv store state from concurrent access
+  - [x] Spawn new thread for every client
+  - [x] Protect kv store state from concurrent access
 
 - [ ] Server failure handling
   - [ ] Keep track of disconnected servers in a data structure
   - [ ] Flag server as `inactive` after response `read()` timeout
   - [ ] Ping dead servers in specified intervals to check if they have come alive
   - [ ] Add logic to connect with rejoined server and flag as `active`
+
+- [ ] Logging
+  - [ ] Server log files
+  - [ ] Client log files

@@ -23,6 +23,8 @@
 Server::Server(int port)
 {
     listenfd = start_listener(port);
+    std::thread serve_thread(&Server::accept_and_serve_forever, this);
+    serve_thread.detach();
 }
 
 /**

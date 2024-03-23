@@ -9,28 +9,16 @@
 #include <iostream>
 #include "client.hpp"
 #include "../utils/conn.hpp"
-
-/**
- * @brief Placeholder for a hash function until
- * openssl setup works
- *
- * @param[in] num An integer to get the hash of
- *
- * @return The computer hash value
- */
-int hash_value(int num)
-{
-    srand(num);
-    return rand() % INT_MAX;
-}
+#include "../utils/logger.hpp"
+#include "../hash/hash.hpp"
 
 /**
  * @brief Implementation of Server constructor
  * @param[in] h The hash value
  * @param[in] p The port
- * @param[in] c The clientfd\
+ * @param[in] c The clientfd
  */
-Server::Server(int h, int p, int c)
+ServerMeta::ServerMeta(unsigned int h, int p, int c)
 {
     hash = h;
     port = p;
@@ -45,12 +33,13 @@ Server::Server(int h, int p, int c)
  */
 Client::Client(std::vector<int> ports)
 {
-    int hash, clientfd;
+    unsigned int hash;
+    int clientfd;
     for (int port : ports)
     {
-        hash = hash_value(port);
+        hash = getHash(port);
         clientfd = connect_server(port);
-        Server *s = new Server(hash, port, clientfd);
+        ServerMeta *s = new ServerMeta(hash, port, clientfd);
         add_server_to_pool(s);
     }
 }
@@ -60,10 +49,10 @@ Client::Client(std::vector<int> ports)
  * of the client
  * @param[in] server_p pointer to a `Server` instance
  */
-void Client::add_server_to_pool(Server *server_p)
+void Client::add_server_to_pool(ServerMeta *server_p)
 {
     int n = server_pool.size(), i;
-    Server *s;
+    ServerMeta *s;
 
     if (n == 0 || server_pool[n - 1]->hash < server_p->hash)
     {
@@ -89,12 +78,11 @@ void Client::add_server_to_pool(Server *server_p)
  *
  * @return The server instance
  */
-Server *Client::select_successor_server(std::string key)
+ServerMeta *Client::select_successor_server(std::string key)
 {
-    std::hash<std::string> str_hash_func;
-    int key_hash = str_hash_func(key);
+    unsigned int key_hash = getHash(key);
 
-    for (Server *s : server_pool)
+    for (ServerMeta *s : server_pool)
     {
         // The first alive server that has >= hash value
         if (s->clientfd >= 0 && s->hash >= key_hash)
@@ -124,7 +112,7 @@ bool Client::send_put_req(std::string key, std::string value, msg_t *response)
         return false;
     }
 
-    Server *server_p = select_successor_server(key);
+    ServerMeta *server_p = select_successor_server(key);
     bool success = false;
 
     send_msg(server_p->clientfd, put_msg);
@@ -164,7 +152,7 @@ std::string Client::send_get_req(std::string key, msg_t *response)
         return "";
     }
 
-    Server *server_p = select_successor_server(key);
+    ServerMeta *server_p = select_successor_server(key);
     std::string value = "";
 
     send_msg(server_p->clientfd, get_msg);
@@ -189,7 +177,7 @@ std::string Client::send_get_req(std::string key, msg_t *response)
  */
 void Client::close_client()
 {
-    for (Server *s : server_pool)
+    for (ServerMeta *s : server_pool)
     {
         if (s->clientfd >= 0)
         {

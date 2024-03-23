@@ -14,7 +14,7 @@
 
 int main(int argc, char const *argv[])
 {
-    int port;
+    int port, opt;
     if (argc < 2)
     {
         printf("You must enter `port` as an argument\n");
@@ -22,7 +22,17 @@ int main(int argc, char const *argv[])
     }
 
     port = std::stoi(argv[1]);
-
     Server server(port);
-    server.accept_and_serve_forever();
+
+    while (1)
+    {
+        std::cout << "Enter 0 to Quit server: " << std::endl;
+        std::cin >> opt;
+        if (opt == 0)
+        {
+            server.close_server();
+            sleep(1);
+            break;
+        }
+    }
 }

@@ -12,13 +12,13 @@
 
 /* Represents a server that the client is
  * connected to */
-class Server
+class ServerMeta
 {
 public:
-    int hash;
+    unsigned int hash;
     int port;
     int clientfd;
-    Server(int hash, int port, int clientfd);
+    ServerMeta(unsigned int hash, int port, int clientfd);
 };
 
 /**
@@ -27,22 +27,22 @@ public:
  */
 class Client
 {
-private:
-    std::vector<Server *> server_pool;
+protected:
+    std::vector<ServerMeta *> server_pool;
 
     /**
      * @brief Store a server instance to the state
      * of the client
      * @param[in] server_p pointer to a `Server` instance
      */
-    void add_server_to_pool(Server *server_p);
+    void add_server_to_pool(ServerMeta *server_p);
 
     /**
      * @brief Selects a server for a given key
      * @param[in] key The key to store
      * @return The server instance
      */
-    Server *select_successor_server(std::string key);
+    ServerMeta *select_successor_server(std::string key);
 
 public:
     /**

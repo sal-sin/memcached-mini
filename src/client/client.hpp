@@ -9,17 +9,8 @@
 #include <unistd.h>
 #include <iostream>
 #include "../utils/message.hpp"
-
-/* Represents a server that the client is
- * connected to */
-class ServerMeta
-{
-public:
-    unsigned int hash;
-    int port;
-    int clientfd;
-    ServerMeta(unsigned int hash, int port, int clientfd);
-};
+#include "connection.hpp"
+#include <shared_mutex>
 
 /**
  * @brief represents a single client. This class contains
@@ -27,23 +18,6 @@ public:
  */
 class Client
 {
-protected:
-    std::vector<ServerMeta *> server_pool;
-
-    /**
-     * @brief Store a server instance to the state
-     * of the client
-     * @param[in] server_p pointer to a `Server` instance
-     */
-    void add_server_to_pool(ServerMeta *server_p);
-
-    /**
-     * @brief Selects a server for a given key
-     * @param[in] key The key to store
-     * @return The server instance
-     */
-    ServerMeta *select_successor_server(std::string key);
-
 public:
     /**
      * @brief Client starts by connecting to a localhost servers listening
@@ -81,4 +55,33 @@ public:
      * @brief terminates connection with all servers
      */
     void close_client();
+
+protected:
+    std::vector<Connection *> server_pool;
+
+    /**
+     * @brief Store a server instance to the state
+     * of the client
+     * @param[in] server_p pointer to a `Server` instance
+     */
+    void add_server_to_pool(Connection *server_p);
+
+    /**
+     * @brief Selects a server for a given key
+     * @param[in] key The key to store
+     * @return The server instance
+     */
+    Connection *select_successor_server(std::string key);
+
+private:
+    std::shared_mutex close_mutex;
+    bool close_flag;
+
+    /**
+     * @brief Try connecting to servers that have been
+     * disconnected. This function is expected to run
+     * in the background throughout while the client is
+     * active
+     */
+    void poll_disconnected_servers();
 };

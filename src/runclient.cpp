@@ -17,7 +17,7 @@
 
 using namespace std;
 
-void start_client_interface(Client cl);
+void start_client_interface(Client *cl);
 
 int main(int argc, char const *argv[])
 {
@@ -39,8 +39,8 @@ int main(int argc, char const *argv[])
         ports.push_back(port);
     }
 
-    Client client(ports);
-    start_client_interface(client);
+    Client *cl = new Client(ports);
+    start_client_interface(cl);
 
     return 0;
 }
@@ -51,7 +51,7 @@ int main(int argc, char const *argv[])
  * servers
  * @param[in] cl a `Client` instance
  */
-void start_client_interface(Client cl)
+void start_client_interface(Client *cl)
 {
     int op;
     bool success;
@@ -76,7 +76,7 @@ void start_client_interface(Client cl)
         case 1:
             cout << "Enter the key to fetch: ";
             cin >> key;
-            response_val = cl.send_get_req(key, resp);
+            response_val = cl->send_get_req(key, resp);
             if (response_val.length() > 0)
             {
                 cout << "\tReceived value: "
@@ -94,7 +94,7 @@ void start_client_interface(Client cl)
             cout << "Enter the value to associate with key: ";
             cin >> value;
 
-            success = cl.send_put_req(key, value, resp);
+            success = cl->send_put_req(key, value, resp);
             if (success)
             {
                 cout << "\tPut Successful for key: "
@@ -110,7 +110,7 @@ void start_client_interface(Client cl)
             cout << RED << "\n================" << RESET << endl;
             cout << RED << "Closing Client" << RESET << endl;
             cout << RED << "================" << RESET << endl;
-            cl.close_client();
+            cl->close_client();
             return;
 
         default:

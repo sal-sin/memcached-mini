@@ -65,11 +65,11 @@ Go inside the repository and follow the steps below:
   - [x] Spawn new thread for every client
   - [x] Protect kv store state from concurrent access
 
-- [ ] Server failure handling
-  - [ ] Keep track of disconnected servers in a data structure
-  - [ ] Flag server as `inactive` after response `read()` timeout
-  - [ ] Ping dead servers in specified intervals to check if they have come alive
-  - [ ] Add logic to connect with rejoined server and flag as `active`
+- [x] Server failure handling
+  - [x] Keep track of disconnected servers in a data structure
+  - [x] Flag server as `inactive` after response `read()` timeout
+  - [x] Ping dead servers in specified intervals to check if they have come alive
+  - [x] Add logic to connect with rejoined server and flag as `active`
 
 - [ ] Logging
   - [ ] Server log files

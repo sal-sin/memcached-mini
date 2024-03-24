@@ -13,7 +13,7 @@
  * @param[in] str Input string
  * @return the hash value
  */
-unsigned int getHash(std::string str);
+unsigned int get_hash(std::string str);
 
 /**
  * Given an integer, return its hash value
@@ -21,4 +21,4 @@ unsigned int getHash(std::string str);
  * @param[in] num Input number
  * @return the hash value
  */
-unsigned int getHash(int num);
+unsigned int get_hash(int num);

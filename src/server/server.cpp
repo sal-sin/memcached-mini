@@ -69,18 +69,18 @@ void Server::process_requests(int connfd)
         switch (req_msg->type)
         {
         case req_put_t:
-            kv_store_mutex.lock();
+            kv_store_mutex.lock(); // write
             kv_store[req_msg->key] = req_msg->value;
+            kv_store_mutex.unlock();
             resp = create_ack_msg();
             print_kv_state();
-            kv_store_mutex.unlock();
             break;
         case req_get_t:
-            kv_store_mutex.lock();
+            kv_store_mutex.lock_shared(); // read
             resp = kv_store.count(req_msg->key) > 0
                        ? create_hit_msg(kv_store[req_msg->key])
                        : create_miss_msg();
-            kv_store_mutex.unlock();
+            kv_store_mutex.unlock_shared();
             break;
         default:
             printf("[Server] Invalid message type received, type = %d", req_msg->type);
@@ -100,12 +100,14 @@ void Server::process_requests(int connfd)
  */
 void Server::print_kv_state()
 {
+    kv_store_mutex.lock_shared(); // read
     std::cout << GREEN << "\n[Server] KV Store state so far:" << RESET << std::endl;
     for (std::pair<std::string, std::string> p : kv_store)
     {
         std::cout << "\t" << YELLOW << p.first << RESET
                   << " -> " << YELLOW << p.second << RESET << std::endl;
     }
+    kv_store_mutex.unlock_shared();
 }
 
 /**

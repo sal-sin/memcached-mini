@@ -9,6 +9,8 @@
  * variable of this class.
  */
 
+#include <shared_mutex>
+
 /**
  * @brief Represents a single server
  */
@@ -35,7 +37,7 @@ public:
 
 private:
     int listenfd;
-    std::mutex kv_store_mutex;
+    std::shared_mutex kv_store_mutex;
     std::unordered_map<std::string, std::string> kv_store;
 
     /**

@@ -30,12 +30,6 @@ public:
     Server(int port, bool print_logs);
 
     /**
-     * @brief continuously and sequentially keep accepting connections
-     * serving requests
-     */
-    void accept_and_serve_forever();
-
-    /**
      * @brief Server cannot accept new clients after this call
      * Connected clients will be served until they disconnect.
      */
@@ -46,6 +40,12 @@ private:
     std::shared_mutex kv_store_mutex;
     std::unordered_map<std::string, std::string> kv_store;
     Logger *logger;
+
+    /**
+     * @brief continuously and sequentially keep accepting connections
+     * serving requests
+     */
+    void accept_and_serve_forever();
 
     /**
      * @brief process requests received from the client

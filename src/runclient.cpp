@@ -39,7 +39,7 @@ int main(int argc, char const *argv[])
         ports.push_back(port);
     }
 
-    Client *cl = new Client(ports);
+    Client *cl = new Client(ports, true);
     start_client_interface(cl);
 
     return 0;

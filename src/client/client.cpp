@@ -11,6 +11,8 @@
 #include "client.hpp"
 #include "../utils/conn.hpp"
 #include "../hash/hash.hpp"
+#include "../utils/logger.hpp"
+#include "../utils/message.hpp"
 
 /** The client will try to connect
  * with disconnected servers in
@@ -22,13 +24,15 @@ unsigned int POLL_INTERVAL = 5;
 unsigned int RESPONSE_TIMEOUT = 2000;
 
 /**
- * @brief Client starts by connecting to a localhost server listening
+ * @brief Client starts by connecting to a localhost servers listening
  * at the ports passed
  *
- * @param[in] ports ports of the servers in the server pool
+ * @param[in] ports Ports of all servers in the server pool
+ * @param[in] print_logs Indicates if log should be printed
  */
-Client::Client(std::vector<int> ports)
+Client::Client(std::vector<int> ports, bool print_logs)
 {
+    logger = new Logger(print_logs);
     close_flag = false;
     for (int port : ports)
     {
@@ -61,20 +65,20 @@ bool Client::send_put_req(std::string key, std::string value, msg_t *response)
     Connection *server_p = select_successor_server(key);
     if (!server_p)
     {
-        display_msg("[Client] No server alive at the moment for", put_msg);
+        logger->display_msg("[Client] No server alive at the moment for", put_msg);
         return false;
     }
 
     bool success = false;
 
     send_msg(server_p->get_fd(), put_msg);
-    display_msg("[Client] Sent Request to server at port " + std::to_string(server_p->get_port()),
-                put_msg);
+    logger->display_msg("[Client] Sent Request to server at port " + std::to_string(server_p->get_port()),
+                        put_msg);
 
     // wait for acknowledgement
     if (read_msg(server_p->get_fd(), response, RESPONSE_TIMEOUT) >= 0)
     {
-        display_msg("[Client] Received Response", response);
+        logger->display_msg("[Client] Received Response", response);
         success = true;
     }
     else
@@ -108,19 +112,19 @@ std::string Client::send_get_req(std::string key, msg_t *response)
     Connection *server_p = select_successor_server(key);
     if (!server_p)
     {
-        display_msg("[Client] No server alive at the moment for", get_msg);
+        logger->display_msg("[Client] No server alive at the moment for", get_msg);
         return "";
     }
 
     std::string value = "";
     send_msg(server_p->get_fd(), get_msg);
-    display_msg("[Client] Sent Request to server at port " + std::to_string(server_p->get_port()),
-                get_msg);
+    logger->display_msg("[Client] Sent Request to server at port " + std::to_string(server_p->get_port()),
+                        get_msg);
 
     // wait for value
     if (read_msg(server_p->get_fd(), response, RESPONSE_TIMEOUT) >= 0)
     {
-        display_msg("[Client] Received Response", response);
+        logger->display_msg("[Client] Received Response", response);
 
         if (response->type == resp_hit_t)
             value = response->value;

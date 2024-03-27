@@ -30,12 +30,12 @@ public:
     bool test_server_pool_hash_ordered()
     {
         int n = server_pool.size();
-        ServerMeta *s, *prev = NULL;
+        Connection *s, *prev = NULL;
 
         for (int i = 1; i < n; i++)
         {
             s = server_pool[i];
-            if (prev && s->hash < prev->hash)
+            if (prev && s->get_port_hash() < prev->get_port_hash())
                 return false;
             prev = s;
         }
@@ -44,8 +44,8 @@ public:
 
     bool test_successor_server(std::string key, int expected_port)
     {
-        ServerMeta *s = select_successor_server(key);
-        if (s->port != expected_port)
+        Connection *s = select_successor_server(key);
+        if (s->get_port() != expected_port)
             return false;
         return true;
     }
@@ -98,7 +98,7 @@ void test(string name, bool success)
 void testBasicClientNoServer()
 {
     vector<int> ports = {1000, 6060, 8000, 9000};
-    TestClient cl(ports);
+    TestClient cl(ports, false);
 
     cout << "TEST: " << __FUNCTION__ << endl;
     test("test_all_servers_saved", cl.test_all_servers_saved(4));
@@ -109,11 +109,11 @@ void testBasicClientNoServer()
 
 void testBasicClientOneServer()
 {
-    Server server(6060);
+    Server server(6060, false);
     vector<int> ports = {1000, 6060, 8000, 9000};
-    TestClient cl(ports);
+    TestClient cl(ports, false);
 
-    cout << "TEST: " << __FUNCTION__ << endl;
+    cout << "\nTEST: " << __FUNCTION__ << endl;
     test("test_all_servers_saved", cl.test_all_servers_saved(4));
     test("test_server_pool_hash_ordered", cl.test_server_pool_hash_ordered());
     test("test_successor_server", cl.test_successor_server("key1", 6060));

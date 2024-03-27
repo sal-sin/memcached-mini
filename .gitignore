@@ -3,4 +3,4 @@ temp*
 .vscode
 run.sh
 exp*
-logger*
+archive*

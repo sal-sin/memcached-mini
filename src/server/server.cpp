@@ -11,6 +11,7 @@
 #include "server.hpp"
 #include "../utils/message.hpp"
 #include "../utils/conn.hpp"
+#include "../utils/logger.hpp"
 #include "../utils/colors.hpp"
 
 /**
@@ -19,9 +20,12 @@
  * a localhost server that listens on the port passed
  *
  * @param[in] port The port where the server should listen
+ * @param[in] print_logs Indicates if logs should be printed
+ * to console
  */
-Server::Server(int port)
+Server::Server(int port, bool print_logs)
 {
+    logger = new Logger(print_logs);
     listenfd = start_listener(port);
     std::thread serve_thread(&Server::accept_and_serve_forever, this);
     serve_thread.detach();
@@ -37,11 +41,12 @@ void Server::accept_and_serve_forever()
     while (true)
     {
         // accept
-        std::cout << "\n[Server] Waiting for clients" << std::endl;
+        *logger << "\n[Server] Waiting for clients\n";
         connfd = accept_client(listenfd);
         if (connfd >= 0) // valid connection
         {
-            std::cout << GREEN << "\n[Server] Client connected" << RESET << std::endl;
+            *logger << GREEN << "\n[Server] Client connected\n"
+                    << RESET;
             std::thread cl_thread(&Server::process_requests, this, connfd);
             cl_thread.detach();
         }
@@ -65,7 +70,7 @@ void Server::process_requests(int connfd)
     // keep reading until EOF/error
     while (read_msg(connfd, req_msg, -1) != -1)
     {
-        display_msg("[Server] Received Request", req_msg);
+        logger->display_msg("[Server] Received Request", req_msg);
         switch (req_msg->type)
         {
         case req_put_t:
@@ -88,7 +93,7 @@ void Server::process_requests(int connfd)
 
         // respond back to the client
         send_msg(connfd, resp);
-        display_msg("[Server] Sending Response", resp);
+        logger->display_msg("[Server] Sending Response", resp);
         free(resp);
     }
     printf("\n[Server] EOF recieved from connfd\n");
@@ -101,11 +106,12 @@ void Server::process_requests(int connfd)
 void Server::print_kv_state()
 {
     kv_store_mutex.lock_shared(); // read
-    std::cout << GREEN << "\n[Server] KV Store state so far:" << RESET << std::endl;
+    *logger << GREEN << "\n[Server] KV Store state so far:\n"
+            << RESET;
     for (std::pair<std::string, std::string> p : kv_store)
     {
-        std::cout << "\t" << YELLOW << p.first << RESET
-                  << " -> " << YELLOW << p.second << RESET << std::endl;
+        *logger << "\t" << YELLOW << p.first << RESET
+                << " -> " << YELLOW << p.second << RESET << "\n";
     }
     kv_store_mutex.unlock_shared();
 }

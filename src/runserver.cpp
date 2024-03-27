@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
     }
 
     port = std::stoi(argv[1]);
-    Server server(port);
+    Server server(port, true);
 
     while (1)
     {

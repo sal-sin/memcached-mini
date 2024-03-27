@@ -16,6 +16,14 @@
 #include <errno.h>
 #include "conn.hpp"
 
+// #define DEBUG
+
+#ifdef DEBUG
+#define dbg_perror(x) perror(x)
+#else
+#define dbg_perror(...) ((void)((0)))
+#endif
+
 #define LOCALHOST "127.0.0.1"
 #define CONN_BUFFER 2048
 
@@ -38,7 +46,7 @@ int start_listener(int port)
     // The socket where server should listen for new connection requests
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
-        perror("[server] couldn't create listenfd");
+        dbg_perror("[server] couldn't create listenfd");
         return -1;
     }
 
@@ -48,7 +56,7 @@ int start_listener(int port)
     // Associate `addr` to the socket `listenfd`
     if (bind(listenfd, (struct sockaddr *)&addr, sizeof(addr)) < 0)
     {
-        perror("[server] couldn't bind socket to address");
+        dbg_perror("[server] couldn't bind socket to address");
         return -1;
     }
 
@@ -57,7 +65,7 @@ int start_listener(int port)
     if (listen(listenfd, CONN_BUFFER) < 0)
     {
         close(listenfd);
-        perror("[server] couldn't start listener");
+        dbg_perror("[server] couldn't start listener");
         return -1;
     }
     return listenfd;
@@ -82,12 +90,12 @@ int accept_client(int listenfd)
     {
         if (errno == EBADF)
         {
-            perror("socket is not open to accept clients");
+            dbg_perror("socket is not open to accept clients");
             return -1;
         }
         else
         {
-            perror("error while attempting accept client");
+            dbg_perror("error while attempting accept client");
             return -2;
         }
     }
@@ -111,7 +119,7 @@ int connect_server(int port)
     // Open a socket to communicate with server
     if ((clientfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
-        perror("[client] Couldn't create socket");
+        dbg_perror("[client] Couldn't create socket");
         return -1;
     }
 
@@ -119,7 +127,7 @@ int connect_server(int port)
     if (connect(clientfd, (struct sockaddr *)&addr, sizeof(sockaddr)) < 0)
     {
         close(clientfd);
-        perror("[client] Couldn't connect to the server");
+        dbg_perror("[client] Couldn't connect to the server");
         return -1;
     }
     return clientfd;

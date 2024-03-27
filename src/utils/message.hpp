@@ -1,3 +1,6 @@
+#ifndef MESSAGE_H
+#define MESSAGE_H
+
 #define MAX_KSIZE 100
 #define MAX_VSIZE 1000
 
@@ -51,14 +54,6 @@ int read_msg(int connfd, msg_t *msg_p, int timeout_ms);
  * @return 1 if successful, else -1
  */
 int send_msg(int connfd, msg_t *msg_p);
-
-/**
- * @brief print out a message
- *
- * @param[in] prompt A prompt to include with the message
- * @param[in] msg_p pointer to the message to display
- */
-void display_msg(std::string prompt, msg_t *msg_p);
 
 /**
  * @brief Create reference for a `msg_t` type struct.
@@ -116,3 +111,5 @@ msg_t *create_hit_msg(std::string value);
  * @return Reference to a `msg_t` instance, null in case of error
  */
 msg_t *create_miss_msg();
+
+#endif

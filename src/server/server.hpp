@@ -9,7 +9,11 @@
  * variable of this class.
  */
 
+#ifndef SERVER_H
+#define SERVER_H
+
 #include <shared_mutex>
+#include "../utils/logger.hpp"
 
 /**
  * @brief Represents a single server
@@ -20,8 +24,10 @@ public:
     /**
      * The constructor should start a new server
      * @param[in] port the localhost port where server should be started
+     * @param[in] print_logs Indicates if logs should be printed
+     * to console
      */
-    Server(int port);
+    Server(int port, bool print_logs);
 
     /**
      * @brief continuously and sequentially keep accepting connections
@@ -39,6 +45,7 @@ private:
     int listenfd;
     std::shared_mutex kv_store_mutex;
     std::unordered_map<std::string, std::string> kv_store;
+    Logger *logger;
 
     /**
      * @brief process requests received from the client
@@ -52,3 +59,4 @@ private:
      */
     void print_kv_state();
 };
+#endif

@@ -88,45 +88,6 @@ int send_msg(int connfd, msg_t *msg_p)
 }
 
 /**
- * @brief return a string describing a message type
- *
- * @param type `msg_type_t` type of the message
- *
- * @return a string describing the type
- */
-std::string mtype_to_str(msg_type_t type)
-{
-    switch (type)
-    {
-    case req_get_t:
-        return "Get Request";
-    case req_put_t:
-        return "Put Request";
-    case resp_ack_t:
-        return "Ack Response";
-    case resp_hit_t:
-        return "Hit Response";
-    case resp_miss_t:
-        return "Miss Response";
-    default:
-        return "Invalid Type";
-    }
-}
-
-/**
- * @brief print out a message
- *
- * @param[in] prompt A prompt to include with the message
- * @param[in] msg_p pointer to the message to display
- */
-void display_msg(std::string prompt, msg_t *msg_p)
-{
-    printf("\n%s:\n", prompt.c_str());
-    printf("\tType: %s | Key: \"%s\" | Value: \"%s\"\n",
-           mtype_to_str(msg_p->type).c_str(), msg_p->key, msg_p->value);
-}
-
-/**
  * @brief Create reference for a `msg_t` type struct.
  * Caller should free the returned reference.
  *

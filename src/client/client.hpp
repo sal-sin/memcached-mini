@@ -6,11 +6,15 @@
  * server pool. The implementation is present in /src/client/client.cpp
  */
 
+#ifndef CLIENT_H
+#define CLIENT_H
+
 #include <unistd.h>
 #include <iostream>
-#include "../utils/message.hpp"
-#include "connection.hpp"
 #include <shared_mutex>
+#include "../utils/message.hpp"
+#include "../utils/logger.hpp"
+#include "connection.hpp"
 
 /**
  * @brief represents a single client. This class contains
@@ -24,8 +28,9 @@ public:
      * at the ports passed
      *
      * @param[in] ports Ports of all servers in the server pool
+     * @param[in] print_logs Indicates if log should be printed
      */
-    Client(std::vector<int> ports);
+    Client(std::vector<int> ports, bool print_logs);
 
     /**
      * @brief sends a `put` request to the server it is connected to
@@ -76,6 +81,7 @@ protected:
 private:
     std::shared_mutex close_mutex;
     bool close_flag;
+    Logger *logger;
 
     /**
      * @brief Try connecting to servers that have been
@@ -85,3 +91,5 @@ private:
      */
     void poll_disconnected_servers();
 };
+
+#endif

@@ -71,6 +71,6 @@ Go inside the repository and follow the steps below:
   - [x] Ping dead servers in specified intervals to check if they have come alive
   - [x] Add logic to connect with rejoined server and flag as `active`
 
-- [ ] Logging
-  - [ ] Server log files
-  - [ ] Client log files
+- [x] Logging
+  - [x] Server logging
+  - [x] Client logging
